@@ -5,8 +5,23 @@
 
 package pacman
 
-import "testing"
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"testing"
+)
 
-func TestSyncNano(t *testing.T) {
-	
+func init() {
+	cmd := exec.Command("fakeroot")
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Unable to set fakeroot environment")
+		os.Exit(1)
+	}
+	fmt.Println("[fakeroot] - done")
+}
+
+func TestInstallNano(t *testing.T) {
+
 }
