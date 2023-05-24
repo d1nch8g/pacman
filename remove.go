@@ -8,14 +8,11 @@ package pacman
 import (
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 )
 
 // Optional parameters for pacman remove command.
 type RemoveOptions struct {
-	// Run with sudo priveleges. [sudo]
-	Sudo bool
 	// Do not ask for any confirmation. [--noconfirm]
 	NoConfirm bool
 	// Remove with all unnecessary packages. [--recursive]
@@ -35,7 +32,6 @@ type RemoveOptions struct {
 }
 
 var RemoveDefault = RemoveOptions{
-	Sudo:        true,
 	NoConfirm:   true,
 	Recursive:   true,
 	WithConfigs: true,
@@ -44,39 +40,35 @@ var RemoveDefault = RemoveOptions{
 	Input:       os.Stdin,
 }
 
+// Remove packages from system.
 func Remove(pkgs string, opts ...RemoveOptions) error {
-	if opts == nil {
-		opts = []RemoveOptions{RemoveDefault}
-	}
-	o := opts[0]
-	command := ""
-	if o.Sudo {
-		command += "sudo "
-	}
-	command += "pacman -R "
+	return RemoveList(strings.Split(pkgs, " "), opts...)
+}
 
+// Remove packages from system.
+func RemoveList(pkgs []string, opts ...RemoveOptions) error {
+	o := formOptions(opts, &RemoveDefault)
+
+	var args []string
 	if o.NoConfirm {
-		command += "--noconfirm "
+		args = append(args, "--noconfirm")
 	}
 	if o.Recursive {
-		command += "--recursive "
+		args = append(args, "--recursive")
 	}
 	if o.ForceRecursive {
-		command += "-ss"
+		args = append(args, "-ss")
 	}
 	if o.WithConfigs {
-		command += "--nosave"
+		args = append(args, "--nosave")
 	}
+	args = append(args, pkgs...)
 
-	command += strings.Join(o.AdditionalParams, " ") + " " + pkgs
+	cmd := pacmanCmd(true, args...)
 
-	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Input
-	return cmd.Run()
-}
 
-func RemoveList(pkgs []string, opts ...RemoveOptions) error {
-	return Remove(strings.Join(pkgs, " "), opts...)
+	return cmd.Run()
 }

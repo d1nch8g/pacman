@@ -36,3 +36,10 @@ func pacmanCmd(sudo bool, args ...string) *exec.Cmd {
 	}
 	return exec.Command(pacman, args...)
 }
+
+func formOptions[Options any](arr []Options, dv *Options) *Options {
+	if len(arr) != 1 {
+		return dv
+	}
+	return &arr[1]
+}

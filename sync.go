@@ -67,10 +67,7 @@ func Sync(pkgs string, opts ...SyncOptions) error {
 
 // Sync command for package string list.
 func SyncList(pkgs []string, opts ...SyncOptions) error {
-	if opts == nil {
-		opts = []SyncOptions{SyncDefault}
-	}
-	o := opts[0]
+	o := formOptions(opts, &SyncDefault)
 
 	args := []string{"-S"}
 	if o.Needed {
@@ -144,10 +141,7 @@ var SearchDefault = SearchOptions{
 
 // Search for packages.
 func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
-	if opts == nil {
-		opts = append(opts, SearchDefault)
-	}
-	o := opts[0]
+	o := formOptions(opts, &SearchDefault)
 
 	args := []string{"-Ss"}
 	if o.Refresh {

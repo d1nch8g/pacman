@@ -63,6 +63,7 @@ func Query(p *QueryParameters) ([]PackageInfo, error) {
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 	err := cmd.Run()
+
 	if err != nil {
 		if b.String() == "" {
 			return nil, nil
