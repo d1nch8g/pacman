@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// Optional flags for pacman remove command.
+// Optional parameters for pacman remove command.
 type RemoveOptions struct {
 	// Run with sudo priveleges. [sudo]
 	Sudo bool

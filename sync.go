@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// Optional flags for pacman sync command.
+// Optional parameters for pacman sync command.
 type SyncOptions struct {
 	// Run with sudo priveleges. [sudo]
 	Sudo bool
