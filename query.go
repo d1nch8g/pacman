@@ -8,7 +8,6 @@ package pacman
 import (
 	"bytes"
 	"errors"
-	"os/exec"
 	"strings"
 )
 
@@ -39,31 +38,31 @@ func Query(p *QueryParameters) ([]PackageInfo, error) {
 	if p == nil {
 		p = &QueryDefault
 	}
-	command := "pacman -Q "
+
+	args := []string{"-Q"}
 	if p.Explicit {
-		command += "--explicit "
+		args = append(args, "--explicit")
 	}
 	if p.Deps {
-		command += "--deps "
+		args = append(args, "--deps")
 	}
 	if p.Native {
-		command += "--native "
+		args = append(args, "--native")
 	}
 	if p.Foreign {
-		command += "--foreign "
+		args = append(args, "--foreign")
 	}
 	if p.Unrequired {
-		command += "--unrequired "
+		args = append(args, "--unrequired")
 	}
 
-	command += strings.Join(p.AdditionalParams, " ")
+	cmd := pacmanCmd(false, args...)
 
 	var b bytes.Buffer
-	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = &b
 	cmd.Stderr = &b
-	err := cmd.Run()
 
+	err := cmd.Run()
 	if err != nil {
 		if b.String() == "" {
 			return nil, nil
