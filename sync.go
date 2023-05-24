@@ -8,6 +8,7 @@ package pacman
 import (
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -39,6 +40,8 @@ type SyncOptions struct {
 	CleanAll bool
 	// Where command will write output text.
 	Output io.Writer
+	// Input from user is command will ask for something.
+	Input io.Reader
 	// Additional parameters, that will be appended to command as arguements.
 	AdditionalParameters []string
 }
@@ -54,7 +57,7 @@ var DefaultOptions = SyncOptions{
 
 // Executes pacman sync command. This command will read sync options and form
 // command based on first elements from the array.
-func Sync(pkgs []string, opts ...SyncOptions) {
+func Sync(pkgs string, opts ...SyncOptions) error {
 	if opts == nil {
 		opts = []SyncOptions{DefaultOptions}
 	}
@@ -80,7 +83,7 @@ func Sync(pkgs []string, opts ...SyncOptions) {
 		command += "--asdeps "
 	}
 	if o.AsExplict {
-		command += "--asexplict "
+		command += "--asexplicit "
 	}
 	if o.Refresh {
 		command += "--refresh "
@@ -101,6 +104,11 @@ func Sync(pkgs []string, opts ...SyncOptions) {
 		command += "-cc"
 	}
 	command += strings.Join(o.AdditionalParameters, " ") + " "
-	command += strings.Join(pkgs, " ")
+	command += pkgs
 
+	cmd := exec.Command("bash", "-c", command)
+	cmd.Stdout = o.Output
+	cmd.Stderr = o.Output
+	cmd.Stdin = o.Input
+	return cmd.Run()
 }

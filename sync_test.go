@@ -6,22 +6,29 @@
 package pacman
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	cmd := exec.Command("fakeroot")
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Unable to set fakeroot environment")
-		os.Exit(1)
-	}
-	fmt.Println("[fakeroot] - done")
-}
-
 func TestInstallNano(t *testing.T) {
+	assert := assert.New(t)
 
+	err := Sync("nano")
+	assert.NoError(err)
+
+	err = Sync("git", SyncOptions{
+		Sudo:                 true,
+		Needed:               true,
+		NoConfirm:            true,
+		NoProgressBar:        true,
+		NoScriptlet:          true,
+		AsExplict:            true,
+		Refresh:              true,
+		Upgrade:              true,
+		Output:               os.Stdout,
+		AdditionalParameters: []string{},
+	})
+	assert.NoError(err)
 }
