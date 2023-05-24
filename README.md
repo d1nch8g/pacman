@@ -9,3 +9,7 @@
 > **Warning!** Project is in alpha stage, API's are very likely to be changed.
 
 This library aims to provide higly extensible and customizable interface to interact with arch package manager - pacman. This library works as wrapper over pacman, and executing system calls to actual program, so pacman needs to be installed.
+
+<!--
+Add option to connect to different database globally and on execution.
+-->
