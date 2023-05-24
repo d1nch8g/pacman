@@ -106,8 +106,8 @@ func Sync(pkgs string, opts ...SyncOptions) error {
 	if o.CleanAll {
 		command += "-cc"
 	}
-	command += strings.Join(o.AdditionalParams, " ") + " "
-	command += pkgs
+
+	command += strings.Join(o.AdditionalParams, " ") + " " + pkgs
 
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = o.Stdout

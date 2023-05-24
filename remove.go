@@ -44,7 +44,7 @@ var RemoveDefault = RemoveOptions{
 	Input:       os.Stdin,
 }
 
-func Remove(pkgs string, opts ...RemoveOptions) {
+func Remove(pkgs string, opts ...RemoveOptions) error {
 	if opts == nil {
 		opts = []RemoveOptions{RemoveDefault}
 	}
@@ -68,13 +68,15 @@ func Remove(pkgs string, opts ...RemoveOptions) {
 		command += "--nosave"
 	}
 
-	command += strings.Join(o.AdditionalParams, " ") + " "
-	command += pkgs
+	command += strings.Join(o.AdditionalParams, " ") + " " + pkgs
 
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Input
 	return cmd.Run()
+}
 
+func RemoveList(pkgs []string, opts ...RemoveOptions) error {
+	return Remove(strings.Join(pkgs, " "), opts...)
 }
