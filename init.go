@@ -17,4 +17,9 @@ func init() {
 		fmt.Println("unable to find pacman in system")
 		os.Exit(1)
 	}
+	_, err = exec.LookPath("bash")
+	if err != nil {
+		fmt.Println("unable to find bash in system")
+		os.Exit(1)
+	}
 }

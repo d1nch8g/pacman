@@ -6,6 +6,8 @@
 package pacman
 
 import (
+	"bytes"
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -119,4 +121,79 @@ func Sync(pkgs string, opts ...SyncOptions) error {
 // Sync command for package string list.
 func SyncList(pkgs []string, opts ...SyncOptions) error {
 	return Sync(strings.Join(pkgs, " "), opts...)
+}
+
+// Options to apply when searching for some package.
+type SearchOptions struct {
+	// Run with sudo priveleges. [sudo]
+	Sudo bool
+	// Download fresh package databases from the server. [--refresh]
+	Refresh bool
+	// Input from user is command will ask for something.
+	Input io.Reader
+}
+
+// Structure to recieve from search result
+type SearchResult struct {
+	Repo    string
+	Name    string
+	Version string
+	Desc    string
+}
+
+var SearchDefault = SearchOptions{
+	Sudo:    true,
+	Refresh: true,
+	Input:   os.Stdin,
+}
+
+// Search for packages.
+func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
+	if opts == nil {
+		opts = append(opts, SearchDefault)
+	}
+	o := opts[0]
+
+	command := ""
+	if o.Sudo {
+		command += "sudo "
+	}
+	command += "pacman -Ss "
+	if o.Refresh {
+		command += "--refresh "
+	}
+	command += re
+
+	cmd := exec.Command("bash", "-c", command)
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+	cmd.Stdin = os.Stdin
+	err := cmd.Run()
+	if err != nil {
+		if b.String() == `` {
+			return nil, nil
+		}
+		return nil, errors.New("unable to search: " + b.String())
+	}
+	return serializeOutput(b.String()), nil
+}
+
+func serializeOutput(output string) []SearchResult {
+	var rez []SearchResult
+	lines := strings.Split(output, "\n")
+	for i, line := range lines {
+		if i%2 == 1 {
+			continue
+		}
+		spl := strings.Split(line, " ")
+		repoName := strings.Split(spl[0], "/")
+		rez = append(rez, SearchResult{
+			Repo:    repoName[0],
+			Name:    repoName[1],
+			Version: spl[1],
+			Desc:    strings.Trim(lines[i+1], " "),
+		})
+	}
+	return rez
 }
