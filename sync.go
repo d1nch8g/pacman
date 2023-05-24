@@ -5,27 +5,32 @@
 
 package pacman
 
-// Default options for pacman sync.
+// Default options for pacman sync. [--sync]
 var (
-	// Run with sudo priveleges
+	// Run with sudo priveleges. [sudo]
 	Sudo = true
-	// Do not reinstall up to date packages.
+	// Do not reinstall up to date packages. [--needed]
 	Needed = true
-	// Do not ask for any confirmation.
+	// Do not ask for any confirmation. [--noconfirm]
 	NoConfirm = true
-	// Do not show a progress bar when downloading files.
+	// Do not show a progress bar when downloading files. [--noprogressbar]
 	NoProgressBar = true
-	// Do not execute the install scriptlet if one exists.
+	// Do not execute the install scriptlet if one exists. [--noscriptlet]
 	NoScriptlet = false
-	// Install packages as non-explicitly installed.
+	// Install packages as non-explicitly installed. [--asdeps]
 	AsDeps = false
+	// Install packages as explictly installed. [--asexplict]
+	AsExplict = false
 )
 
 // Optional flags for pacman sync command.
 type SyncOptions struct {
-	// Load information from remote repositories.
+	// Sync information from remote repositories. []
 	Refresh bool
-	//
+	// Update programms that are outdated. [--sysupgrade]
+	Update bool
+	// Only download, but do not install package. [-w]
+	
 }
 
 // Executes pacman sync command. If you provide options, they will override

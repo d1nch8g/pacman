@@ -4,3 +4,9 @@
 // Contact email: help@fmnx.su
 
 package pacman
+
+import "testing"
+
+func TestSyncNano(t *testing.T) {
+	
+}
