@@ -4,7 +4,3 @@
 // Contact email: help@fmnx.su
 
 package pacman
-
-type Configuration struct {
-	
-}
