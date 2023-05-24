@@ -169,6 +169,7 @@ func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 	cmd.Stdin = os.Stdin
+
 	err := cmd.Run()
 	if err != nil {
 		if b.String() == `` {
