@@ -8,6 +8,7 @@ package pacman
 import (
 	"bytes"
 	"errors"
+	"os/exec"
 	"strings"
 )
 
@@ -34,6 +35,7 @@ type PackageInfo struct {
 	Version string
 }
 
+// Get information about installed packages.
 func Query(p *QueryParameters) ([]PackageInfo, error) {
 	if p == nil {
 		p = &QueryDefault
@@ -85,4 +87,69 @@ func parsePackages(q string) []PackageInfo {
 		})
 	}
 	return rez
+}
+
+type PackageInfoFull struct {
+	Name          string
+	Version       string
+	Description   string
+	Architecture  string
+	Url           string
+	Licenses      string
+	Groups        string
+	Provides      string
+	DependsOn     string
+	OptionalDeps  string
+	RequiredBy    string
+	OptionalFor   string
+	ConflictsWith string
+	Replaces      string
+	InstalledSize string
+	Packager      string
+	BuildDate     string
+	InstallDate   string
+	InstallReason string
+	InstallScript string
+	ValidatedBy   string
+}
+
+// Get info about outdated packages.
+func Info(pkg string) (*PackageInfoFull, error) {
+	cmd := exec.Command(pacman, "-Qi", pkg)
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+	err := cmd.Run()
+	if err != nil {
+		return nil, errors.New("unable to get info: " + b.String())
+	}
+	out := b.String()
+	return &PackageInfoFull{
+		Name:          parseField(out, "Name            : "),
+		Version:       parseField(out, "Version         : "),
+		Description:   parseField(out, "Description     : "),
+		Architecture:  parseField(out, "Architecture    : "),
+		Url:           parseField(out, "URL             : "),
+		Licenses:      parseField(out, "Licenses        : "),
+		Groups:        parseField(out, "Groups          : "),
+		Provides:      parseField(out, "Provides        : "),
+		DependsOn:     parseField(out, "Depends On      : "),
+		OptionalDeps:  parseField(out, "Optional Deps   : "),
+		RequiredBy:    parseField(out, "Required By     : "),
+		OptionalFor:   parseField(out, "Optional For    : "),
+		ConflictsWith: parseField(out, "Conflicts With  : "),
+		Replaces:      parseField(out, "Replaces        : "),
+		InstalledSize: parseField(out, "Installed Size  : "),
+		Packager:      parseField(out, "Packager        : "),
+		BuildDate:     parseField(out, "Build Date      : "),
+		InstallDate:   parseField(out, "Install Date    : "),
+		InstallReason: parseField(out, "Install Reason  : "),
+		InstallScript: parseField(out, "Install Script  : "),
+		ValidatedBy:   parseField(out, "Validated By    : "),
+	}, nil
+}
+
+func parseField(full string, field string) string {
+	splt := strings.Split(full, field)
+	return strings.Split(splt[1], "\n")[0]
 }
