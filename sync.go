@@ -10,7 +10,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 )
 
@@ -63,64 +62,60 @@ var SyncDefault = SyncOptions{
 // Executes pacman sync command. This command will read sync options and form
 // command based on first elements from the array.
 func Sync(pkgs string, opts ...SyncOptions) error {
-	if opts == nil {
-		opts = []SyncOptions{SyncDefault}
-	}
-	o := opts[0]
-	command := ""
-	if o.Sudo {
-		command += "sudo "
-	}
-	command += "pacman -S "
-	if o.Needed {
-		command += "--needed "
-	}
-	if o.NoConfirm {
-		command += "--noconfirm "
-	}
-	if o.NoProgressBar {
-		command += "--noprogressbar "
-	}
-	if o.NoScriptlet {
-		command += "--noscriptlet "
-	}
-	if o.AsDeps {
-		command += "--asdeps "
-	}
-	if o.AsExplict {
-		command += "--asexplicit "
-	}
-	if o.Refresh {
-		command += "--refresh "
-	}
-	if o.Upgrade {
-		command += "--sysupgrade "
-	}
-	if o.DownloadOnly {
-		command += "--downloadonly"
-	}
-	if o.DownloadOnly {
-		command += "--downloadonly"
-	}
-	if o.Clean {
-		command += "--clean"
-	}
-	if o.CleanAll {
-		command += "-cc"
-	}
-
-	command += strings.Join(o.AdditionalParams, " ") + " " + pkgs
-
-	cmd := exec.Command("bash", "-c", command)
-	cmd.Stdout = o.Stdout
-	cmd.Stderr = o.Stderr
-	cmd.Stdin = o.Input
-	return cmd.Run()
+	return SyncList(strings.Split(pkgs, " "), opts...)
 }
 
 // Sync command for package string list.
 func SyncList(pkgs []string, opts ...SyncOptions) error {
-	return Sync(strings.Join(pkgs, " "), opts...)
+	if opts == nil {
+		opts = []SyncOptions{SyncDefault}
+	}
+	o := opts[0]
+
+	args := []string{"-S"}
+	if o.Needed {
+		args = append(args, "--needed")
+	}
+	if o.NoConfirm {
+		args = append(args, "--noconfirm")
+	}
+	if o.NoProgressBar {
+		args = append(args, "--noprogressbar")
+	}
+	if o.NoScriptlet {
+		args = append(args, "--noscriptlet")
+	}
+	if o.AsDeps {
+		args = append(args, "--asdeps")
+	}
+	if o.AsExplict {
+		args = append(args, "--asexplicit")
+	}
+	if o.Refresh {
+		args = append(args, "--refresh")
+	}
+	if o.Upgrade {
+		args = append(args, "--sysupgrade")
+	}
+	if o.DownloadOnly {
+		args = append(args, "--downloadonly")
+	}
+	if o.DownloadOnly {
+		args = append(args, "--downloadonly")
+	}
+	if o.Clean {
+		args = append(args, "--clean")
+	}
+	if o.CleanAll {
+		args = append(args, "-cc")
+	}
+	args = append(args, pkgs...)
+
+	cmd := pacmanCmd(o.Sudo, args...)
+	cmd.Stdout = o.Stdout
+	cmd.Stderr = o.Stderr
+	cmd.Stdin = o.Input
+	return cmd.Run()
 }
 
 // Options to apply when searching for some package.
@@ -154,17 +149,14 @@ func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
 	}
 	o := opts[0]
 
-	command := ""
-	if o.Sudo {
-		command += "sudo "
-	}
-	command += "pacman -Ss "
+	args := []string{"-Ss"}
 	if o.Refresh {
-		command += "--refresh "
+		args = append(args, "--refresh")
 	}
-	command += re
+	args = append(args, re)
 
-	cmd := exec.Command("bash", "-c", command)
+	cmd := pacmanCmd(o.Sudo, args...)
+
 	var b bytes.Buffer
 	cmd.Stdout = &b
 	cmd.Stderr = &b
@@ -181,18 +173,25 @@ func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
 }
 
 func serializeOutput(output string) []SearchResult {
+	if strings.HasPrefix(output, ":: Synchronizing package databases") {
+		splt := strings.Split(output, "downloading...\n")
+		output = splt[len(splt)-1]
+	}
 	var rez []SearchResult
 	lines := strings.Split(output, "\n")
 	for i, line := range lines {
+		if line == `` {
+			break
+		}
 		if i%2 == 1 {
 			continue
 		}
-		spl := strings.Split(line, " ")
-		repoName := strings.Split(spl[0], "/")
+		splt := strings.Split(line, " ")
+		repoName := strings.Split(splt[0], "/")
 		rez = append(rez, SearchResult{
 			Repo:    repoName[0],
 			Name:    repoName[1],
-			Version: spl[1],
+			Version: splt[1],
 			Desc:    strings.Trim(lines[i+1], " "),
 		})
 	}
