@@ -39,27 +39,30 @@ type SyncOptions struct {
 	// Clean all packages from cache directory. [-cc]
 	CleanAll bool
 	// Where command will write output text.
-	Output io.Writer
+	Stdout io.Writer
+	// Where command will write output text.
+	Stderr io.Writer
 	// Input from user is command will ask for something.
 	Input io.Reader
 	// Additional parameters, that will be appended to command as arguements.
-	AdditionalParameters []string
+	AdditionalParams []string
 }
 
 // Those are options that will be set up by default on program execution.
-var DefaultOptions = SyncOptions{
+var SyncDefault = SyncOptions{
 	Sudo:          true,
 	Needed:        true,
 	NoConfirm:     true,
 	NoProgressBar: true,
-	Output:        os.Stdout,
+	Stdout:        os.Stdout,
+	Stderr:        os.Stderr,
 }
 
 // Executes pacman sync command. This command will read sync options and form
 // command based on first elements from the array.
 func Sync(pkgs string, opts ...SyncOptions) error {
 	if opts == nil {
-		opts = []SyncOptions{DefaultOptions}
+		opts = []SyncOptions{SyncDefault}
 	}
 	o := opts[0]
 	command := ""
@@ -103,12 +106,17 @@ func Sync(pkgs string, opts ...SyncOptions) error {
 	if o.CleanAll {
 		command += "-cc"
 	}
-	command += strings.Join(o.AdditionalParameters, " ") + " "
+	command += strings.Join(o.AdditionalParams, " ") + " "
 	command += pkgs
 
 	cmd := exec.Command("bash", "-c", command)
-	cmd.Stdout = o.Output
-	cmd.Stderr = o.Output
+	cmd.Stdout = o.Stdout
+	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Input
 	return cmd.Run()
+}
+
+// Sync command for package string list.
+func SyncList(pkgs []string, opts ...SyncOptions) error {
+	return Sync(strings.Join(pkgs, " "), opts...)
 }
