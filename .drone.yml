@@ -1,0 +1,28 @@
+kind: pipeline
+name: default
+type: docker
+
+trigger:
+  branch:
+    - main
+
+steps:
+  - name: push github mirror
+    image: appleboy/drone-git-push
+    settings:
+      branch: main
+      remote: git@github.com:fmnx-su/pacman.git
+      force: true
+      commit: true
+      ssh_key:
+        from_secret: SSHKEY
+
+  - name: push codeberg mirror
+    image: appleboy/drone-git-push
+    settings:
+      branch: main
+      remote: git@codeberg.org:dancheg97/pacman.git
+      force: true
+      commit: true
+      ssh_key:
+        from_secret: SSHKEY
