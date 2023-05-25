@@ -13,7 +13,7 @@ import (
 )
 
 // Query parameters for pacman packages.
-type QueryParameters struct {
+type QueryOptions struct {
 	// List packages explicitly installed. [--explicit]
 	Explicit bool
 	// List packages installed as dependencies. [--deps]
@@ -28,7 +28,7 @@ type QueryParameters struct {
 	AdditionalParams []string
 }
 
-var QueryDefault = QueryParameters{}
+var QueryDefault = QueryOptions{}
 
 type PackageInfo struct {
 	Name    string
@@ -36,25 +36,23 @@ type PackageInfo struct {
 }
 
 // Get information about installed packages.
-func Query(p *QueryParameters) ([]PackageInfo, error) {
-	if p == nil {
-		p = &QueryDefault
-	}
+func Query(opts ...QueryOptions) ([]PackageInfo, error) {
+	o := formOptions(opts, &QueryDefault)
 
 	args := []string{"-Q"}
-	if p.Explicit {
+	if o.Explicit {
 		args = append(args, "--explicit")
 	}
-	if p.Deps {
+	if o.Deps {
 		args = append(args, "--deps")
 	}
-	if p.Native {
+	if o.Native {
 		args = append(args, "--native")
 	}
-	if p.Foreign {
+	if o.Foreign {
 		args = append(args, "--foreign")
 	}
-	if p.Unrequired {
+	if o.Unrequired {
 		args = append(args, "--unrequired")
 	}
 
