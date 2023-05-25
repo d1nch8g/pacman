@@ -98,6 +98,8 @@ var MakepkgDefault = MakepkgOptions{
 	Stdin:     os.Stdin,
 }
 
+// This command will build a package in directory provided in options.
+// Function is safe
 func Makepkg(opts ...MakepkgOptions) error {
 	o := formOptions(opts, &MakepkgDefault)
 
@@ -123,9 +125,6 @@ func Makepkg(opts ...MakepkgOptions) error {
 	if o.Geinteg {
 		args = append(args, "--geninteg")
 	}
-	if o.Install {
-		args = append(args, "--install")
-	}
 	if o.Log {
 		args = append(args, "--log")
 	}
@@ -135,29 +134,14 @@ func Makepkg(opts ...MakepkgOptions) error {
 	if o.NpBuild {
 		args = append(args, "--nobuild")
 	}
-	if o.File != `` {
-		args = append(args, "-p")
-		args = append(args, o.File)
-	}
 	if o.RmDeps {
 		args = append(args, "--rmdeps")
 	}
 	if o.Repackage {
 		args = append(args, "--repackage")
 	}
-	if o.SyncDeps {
-		args = append(args, "--syncdeps")
-	}
-	if o.Config != "" {
-		args = append(args, "--config")
-		args = append(args, o.Config)
-	}
 	if o.HoldVer {
 		args = append(args, "--holdver")
-	}
-	if o.GpgKey != "" {
-		args = append(args, "--key")
-		args = append(args, o.GpgKey)
 	}
 	if o.NoArchive {
 		args = append(args, "--noarchive")
@@ -194,6 +178,28 @@ func Makepkg(opts ...MakepkgOptions) error {
 	}
 	if o.AsDeps {
 		args = append(args, "--asdeps")
+	}
+	if o.File != `` {
+		args = append(args, "-p")
+		args = append(args, o.File)
+	}
+	if o.Config != "" {
+		args = append(args, "--config")
+		args = append(args, o.Config)
+	}
+	if o.GpgKey != "" {
+		args = append(args, "--key")
+		args = append(args, o.GpgKey)
+	}
+	if o.Install {
+		args = append(args, "--install")
+		mu.Lock()
+		defer mu.Unlock()
+	}
+	if o.SyncDeps {
+		args = append(args, "--syncdeps")
+		mu.Lock()
+		defer mu.Unlock()
 	}
 	args = append(args, o.AdditionalParams...)
 

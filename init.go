@@ -9,13 +9,18 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sync"
 )
 
+// Dependecy packages.
 const (
 	pacman  = `pacman`
 	sudo    = `sudo`
 	makepkg = `makepkg`
 )
+
+// Global lock for operations with pacman database.
+var mu sync.Mutex
 
 func init() {
 	_, err := exec.LookPath(pacman)
@@ -47,5 +52,5 @@ func formOptions[Options any](arr []Options, dv *Options) *Options {
 	if len(arr) != 1 {
 		return dv
 	}
-	return &arr[1]
+	return &arr[0]
 }

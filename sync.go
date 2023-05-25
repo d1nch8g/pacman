@@ -112,6 +112,8 @@ func SyncList(pkgs []string, opts ...SyncOptions) error {
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Stdin
+	mu.Lock()
+	defer mu.Unlock()
 	return cmd.Run()
 }
 
@@ -156,7 +158,10 @@ func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
 	cmd.Stderr = &b
 	cmd.Stdin = os.Stdin
 
+	mu.Lock()
 	err := cmd.Run()
+	mu.Unlock()
+
 	if err != nil {
 		if b.String() == `` {
 			return nil, nil

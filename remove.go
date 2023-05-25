@@ -71,5 +71,7 @@ func RemoveList(pkgs []string, opts ...RemoveOptions) error {
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Stdin
 
+	mu.Lock()
+	defer mu.Unlock()
 	return cmd.Run()
 }
