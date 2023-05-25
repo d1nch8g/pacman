@@ -62,6 +62,7 @@ func RemoveList(pkgs []string, opts ...RemoveOptions) error {
 	if o.WithConfigs {
 		args = append(args, "--nosave")
 	}
+	args = append(args, o.AdditionalParams...)
 	args = append(args, pkgs...)
 
 	cmd := pacmanCmd(true, args...)

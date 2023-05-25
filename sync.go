@@ -51,12 +51,11 @@ type SyncOptions struct {
 
 // Those are options that will be set up by default on program execution.
 var SyncDefault = SyncOptions{
-	Sudo:          true,
-	Needed:        true,
-	NoConfirm:     true,
-	NoProgressBar: true,
-	Stdout:        os.Stdout,
-	Stderr:        os.Stderr,
+	Sudo:      true,
+	Needed:    true,
+	NoConfirm: true,
+	Stdout:    os.Stdout,
+	Stderr:    os.Stderr,
 }
 
 // Executes pacman sync command. This command will read sync options and form
@@ -106,6 +105,7 @@ func SyncList(pkgs []string, opts ...SyncOptions) error {
 	if o.CleanAll {
 		args = append(args, "-cc")
 	}
+	args = append(args, o.AdditionalParams...)
 	args = append(args, pkgs...)
 
 	cmd := pacmanCmd(o.Sudo, args...)

@@ -55,6 +55,7 @@ func Query(opts ...QueryOptions) ([]PackageInfo, error) {
 	if o.Unrequired {
 		args = append(args, "--unrequired")
 	}
+	args = append(args, o.AdditionalParams...)
 
 	cmd := pacmanCmd(false, args...)
 
