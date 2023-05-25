@@ -21,7 +21,7 @@ import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	err := pacman.Sync("nano")
-    fmt.Println(err)
+	fmt.Println(err)
 }
 ```
 
@@ -32,8 +32,8 @@ import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	r, err := pacman.Search("vim")
-    fmt.Println(r)
-    fmt.Println(err)
+	fmt.Println(r)
+	fmt.Println(err)
 }
 ```
 
@@ -44,7 +44,7 @@ import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	err := pacman.Upgrade("pkg-1-1-any.pkg.tar.zst")
-    fmt.Println(err)
+	fmt.Println(err)
 }
 ```
 
@@ -55,8 +55,8 @@ import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	r, err := pacman.Query()
-    fmt.Println(r)
-    fmt.Println(err)
+	fmt.Println(r)
+	fmt.Println(err)
 }
 ```
 
@@ -66,8 +66,8 @@ func main() {
 import "fmnx.su/dancheg97/pacman"
 
 func main() {
-    err := pacman.Makepkg()
-    fmt.Println(err)
+	err := pacman.Makepkg()
+	fmt.Println(err)
 }
 ```
 
@@ -77,7 +77,7 @@ func main() {
 import "fmnx.su/dancheg97/pacman"
 
 func main() {
-    err := pacman.Remove("emacs")
-    fmt.Println(err)
+	err := pacman.Remove("emacs")
+	fmt.Println(err)
 }
 ```
