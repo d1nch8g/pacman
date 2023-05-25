@@ -113,17 +113,20 @@ type PackageInfoFull struct {
 	ValidatedBy   string
 }
 
-// Get info about outdated packages.
+// Get info about package.
 func Info(pkg string) (*PackageInfoFull, error) {
 	cmd := exec.Command(pacman, "-Qi", pkg)
+
 	var b bytes.Buffer
 	cmd.Stdout = &b
 	cmd.Stderr = &b
+
 	err := cmd.Run()
 	if err != nil {
 		return nil, errors.New("unable to get info: " + b.String())
 	}
 	out := b.String()
+
 	return &PackageInfoFull{
 		Name:          parseField(out, "Name            : "),
 		Version:       parseField(out, "Version         : "),
@@ -152,4 +155,46 @@ func Info(pkg string) (*PackageInfoFull, error) {
 func parseField(full string, field string) string {
 	splt := strings.Split(full, field)
 	return strings.Split(splt[1], "\n")[0]
+}
+
+// Outdated package.
+type OutdatedPackage struct {
+	Name           string
+	CurrentVersion string
+	NewVersion     string
+}
+
+// Get information about outdated packages.
+func Outdated() ([]OutdatedPackage, error) {
+	cmd := exec.Command(pacman, "-Qu")
+
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+
+	err := cmd.Run()
+	if err != nil {
+		if b.String() == `` {
+			return nil, nil
+		}
+		return nil, errors.New("unable to get info: " + b.String())
+	}
+	out := b.String()
+	return parseOutdated(out), nil
+}
+
+func parseOutdated(o string) []OutdatedPackage {
+	var rez []OutdatedPackage
+	for _, line := range strings.Split(o, "\n") {
+		if line == "" {
+			break
+		}
+		splt := strings.Split(line, " ")
+		rez = append(rez, OutdatedPackage{
+			Name:           splt[0],
+			CurrentVersion: splt[1],
+			NewVersion:     splt[3],
+		})
+	}
+	return rez
 }
