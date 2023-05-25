@@ -25,8 +25,8 @@ type RemoveOptions struct {
 	Stdout io.Writer
 	// Where command will write output text.
 	Stderr io.Writer
-	// Input from user is command will ask for something.
-	Input io.Reader
+	// Stdin from user is command will ask for something.
+	Stdin io.Reader
 	// Additional parameters, that will be appended to command as arguements.
 	AdditionalParams []string
 }
@@ -37,7 +37,7 @@ var RemoveDefault = RemoveOptions{
 	WithConfigs: true,
 	Stdout:      os.Stdout,
 	Stderr:      os.Stderr,
-	Input:       os.Stdin,
+	Stdin:       os.Stdin,
 }
 
 // Remove packages from system.
@@ -69,7 +69,7 @@ func RemoveList(pkgs []string, opts ...RemoveOptions) error {
 
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
-	cmd.Stdin = o.Input
+	cmd.Stdin = o.Stdin
 
 	return cmd.Run()
 }

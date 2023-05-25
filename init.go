@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	pacman = `pacman`
-	sudo   = `sudo`
+	pacman  = `pacman`
+	sudo    = `sudo`
+	makepkg = `makepkg`
 )
 
 func init() {
@@ -25,6 +26,11 @@ func init() {
 	_, err = exec.LookPath(sudo)
 	if err != nil {
 		fmt.Println("unable to find sudo in system")
+		os.Exit(1)
+	}
+	_, err = exec.LookPath(makepkg)
+	if err != nil {
+		fmt.Println("unable to find makepkg in system")
 		os.Exit(1)
 	}
 }

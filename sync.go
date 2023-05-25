@@ -43,8 +43,8 @@ type SyncOptions struct {
 	Stdout io.Writer
 	// Where command will write output text.
 	Stderr io.Writer
-	// Input from user is command will ask for something.
-	Input io.Reader
+	// Stdin from user is command will ask for something.
+	Stdin io.Reader
 	// Additional parameters, that will be appended to command as arguements.
 	AdditionalParams []string
 }
@@ -111,7 +111,7 @@ func SyncList(pkgs []string, opts ...SyncOptions) error {
 	cmd := pacmanCmd(o.Sudo, args...)
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
-	cmd.Stdin = o.Input
+	cmd.Stdin = o.Stdin
 	return cmd.Run()
 }
 
@@ -121,8 +121,8 @@ type SearchOptions struct {
 	Sudo bool
 	// Download fresh package databases from the server. [--refresh]
 	Refresh bool
-	// Input from user is command will ask for something.
-	Input io.Reader
+	// Stdin from user is command will ask for something.
+	Stdin io.Reader
 }
 
 // Structure to recieve from search result
@@ -136,7 +136,7 @@ type SearchResult struct {
 var SearchDefault = SearchOptions{
 	Sudo:    true,
 	Refresh: true,
-	Input:   os.Stdin,
+	Stdin:   os.Stdin,
 }
 
 // Search for packages.
