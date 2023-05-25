@@ -5,8 +5,10 @@
 <h2 align="center">Go wrapper for arch package manager</h2>
 
 ![Generic badge](https://img.shields.io/badge/status-alpha-red.svg)
+[![Generic badge](https://img.shields.io/badge/license-gpl-orange.svg)](https://fmnx.su/dancheg97/pacman/src/branch/main/LICENSE)
+[![Generic badge](https://img.shields.io/badge/fmnx-repo-006db0.svg)](https://fmnx.su/dancheg97/pack)
 
-This library aims to provide concurrent, stable and extensible interface to interact with arch package manager - pacman.
+This library aims to provide concurrent, stable and extensible interface to interact with arch package manager - pacman. Library has 0 dependencies and written in pure go with only a few packages from stdlib.
 
 Some of the default options for functions can contain sudo, if you don't need it you can manually disable it.
 
@@ -15,7 +17,7 @@ Functions:
 - `Sync` - syncronize packages
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	err := pacman.Sync("nano")
@@ -26,7 +28,7 @@ func main() {
 - `Search` - search for packages in pacman databases
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	r, err := pacman.Search("vim")
@@ -38,7 +40,7 @@ func main() {
 - `Upgrade` - install packages from local files
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	err := pacman.Upgrade("pkg-1-1-any.pkg.tar.zst")
@@ -49,7 +51,7 @@ func main() {
 - `Query` - list installed packages
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
 	r, err := pacman.Query()
@@ -61,7 +63,7 @@ func main() {
 - `Makepkg` - build package
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
     err := pacman.Makepkg()
@@ -72,7 +74,7 @@ func main() {
 - `Remove` - remove installed packages
 
 ```go
-import "fmnx.su/core/pacman"
+import "fmnx.su/dancheg97/pacman"
 
 func main() {
     err := pacman.Remove("emacs")
