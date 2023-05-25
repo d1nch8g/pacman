@@ -6,9 +6,12 @@
 package pacman
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Options for building packages.
@@ -89,7 +92,6 @@ var MakepkgDefault = MakepkgOptions{
 	Clean:     true,
 	Force:     true,
 	Log:       true,
-	SyncDeps:  true,
 	HoldVer:   true,
 	Needed:    true,
 	NoConfirm: true,
@@ -99,7 +101,8 @@ var MakepkgDefault = MakepkgOptions{
 }
 
 // This command will build a package in directory provided in options.
-// Function is safe
+// Function is safe for concurrent usage. Can be called from multiple
+// goruotines, when options Install or SyncDeps are false.
 func Makepkg(opts ...MakepkgOptions) error {
 	o := formOptions(opts, &MakepkgDefault)
 
@@ -198,8 +201,9 @@ func Makepkg(opts ...MakepkgOptions) error {
 	}
 	if o.SyncDeps {
 		args = append(args, "--syncdeps")
-		mu.Lock()
-		defer mu.Unlock()
+		if mu.TryLock() {
+			defer mu.Unlock()
+		}
 	}
 	args = append(args, o.AdditionalParams...)
 
@@ -212,4 +216,18 @@ func Makepkg(opts ...MakepkgOptions) error {
 	cmd.Stderr = o.Stderr
 
 	return cmd.Run()
+}
+
+// Get parameters of a shell file (might be usefull to resolv deps before
+// package build/installation).
+func GetShParams(file string, arg string) ([]string, error) {
+	tmpl := "source %s; for i in ${%s[@]}; do \necho $i\ndone"
+	cmd := exec.Command("sh", "-c", fmt.Sprintf(tmpl, file, arg))
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	return strings.Split(strings.Trim(b.String(), "\n"), "\n"), nil
 }
