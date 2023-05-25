@@ -11,7 +11,7 @@ steps:
     image: appleboy/drone-git-push
     settings:
       branch: main
-      remote: git@github.com:fmnx-su/pacman.git
+      remote: git@github.com:dancheg97/pacman.git
       force: true
       commit: true
       ssh_key:
