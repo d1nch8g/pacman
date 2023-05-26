@@ -83,3 +83,14 @@ func main() {
 	fmt.Println(err)
 }
 ```
+
+- `RepoAdd` - add package to local repository
+
+```go
+import "fmnx.su/dancheg97/pacman"
+
+func main() {
+	err := pacman.RepoAdd("localhost.db.tar.gz", "vscodium-1-1-x86_64.pkg.tar.zst")
+	fmt.Println(err)
+}
+```

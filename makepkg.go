@@ -216,9 +216,9 @@ func Makepkg(opts ...MakepkgOptions) error {
 	return cmd.Run()
 }
 
-// Get parameters of a shell file (might be usefull to resolv deps before
-// package build/installation).
-func GetShParams(file string, arg string) ([]string, error) {
+// Get parameters from a shell file (might be usefull to resolve dependencies
+// before package build/installation process).
+func GetShellParams(file string, arg string) ([]string, error) {
 	tmpl := "source %s; for i in ${%s[@]}; do \necho $i\ndone"
 
 	var b bytes.Buffer
