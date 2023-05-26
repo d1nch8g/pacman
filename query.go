@@ -57,9 +57,8 @@ func Query(opts ...QueryOptions) ([]PackageInfo, error) {
 	}
 	args = append(args, o.AdditionalParams...)
 
-	cmd := pacmanCmd(false, args...)
-
 	var b bytes.Buffer
+	cmd := exec.Command(pacman, args...)
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 
@@ -114,9 +113,8 @@ type PackageInfoFull struct {
 
 // Get info about package.
 func Info(pkg string) (*PackageInfoFull, error) {
-	cmd := exec.Command(pacman, "-Qi", pkg)
-
 	var b bytes.Buffer
+	cmd := exec.Command(pacman, "-Qi", pkg)
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 
@@ -165,9 +163,8 @@ type OutdatedPackage struct {
 
 // Get information about outdated packages.
 func Outdated() ([]OutdatedPackage, error) {
-	cmd := exec.Command(pacman, "-Qu")
-
 	var b bytes.Buffer
+	cmd := exec.Command(pacman, "-Qu")
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 

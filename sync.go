@@ -108,10 +108,11 @@ func SyncList(pkgs []string, opts ...SyncOptions) error {
 	args = append(args, o.AdditionalParams...)
 	args = append(args, pkgs...)
 
-	cmd := pacmanCmd(o.Sudo, args...)
+	cmd := SudoCommand(o.Sudo, pacman, args...)
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Stdin
+
 	mu.Lock()
 	defer mu.Unlock()
 	return cmd.Run()
@@ -151,16 +152,15 @@ func Search(re string, opts ...SearchOptions) ([]SearchResult, error) {
 	}
 	args = append(args, re)
 
-	cmd := pacmanCmd(o.Sudo, args...)
-
 	var b bytes.Buffer
+	cmd := SudoCommand(o.Sudo, pacman, args...)
 	cmd.Stdout = &b
 	cmd.Stderr = &b
 	cmd.Stdin = os.Stdin
 
 	mu.Lock()
+	defer mu.Unlock()
 	err := cmd.Run()
-	mu.Unlock()
 
 	if err != nil {
 		if b.String() == `` {

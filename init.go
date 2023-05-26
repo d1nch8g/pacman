@@ -17,35 +17,33 @@ const (
 	pacman  = `pacman`
 	sudo    = `sudo`
 	makepkg = `makepkg`
+	repoadd = `repo-add`
 )
 
 // Global lock for operations with pacman database.
 var mu sync.Mutex
 
 func init() {
-	_, err := exec.LookPath(pacman)
+	checkDependency(pacman)
+	checkDependency(sudo)
+	checkDependency(makepkg)
+	checkDependency(repoadd)
+}
+
+func checkDependency(p string) {
+	_, err := exec.LookPath(p)
 	if err != nil {
-		fmt.Println("unable to find pacman in system")
-		os.Exit(1)
-	}
-	_, err = exec.LookPath(sudo)
-	if err != nil {
-		fmt.Println("unable to find sudo in system")
-		os.Exit(1)
-	}
-	_, err = exec.LookPath(makepkg)
-	if err != nil {
-		fmt.Println("unable to find makepkg in system")
+		fmt.Printf("unable to find %s in system\n", p)
 		os.Exit(1)
 	}
 }
 
-func pacmanCmd(sudo bool, args ...string) *exec.Cmd {
+func SudoCommand(sudo bool, cmd string, args ...string) *exec.Cmd {
 	if sudo {
-		args := append([]string{pacman}, args...)
+		args := append([]string{cmd}, args...)
 		return exec.Command("sudo", args...)
 	}
-	return exec.Command(pacman, args...)
+	return exec.Command(cmd, args...)
 }
 
 func formOptions[Options any](arr []Options, dv *Options) *Options {

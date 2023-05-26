@@ -13,6 +13,8 @@ import (
 
 // Optional parameters for pacman remove command.
 type RemoveOptions struct {
+	// Run with sudo priveleges. [sudo]
+	Sudo bool
 	// Do not ask for any confirmation. [--noconfirm]
 	NoConfirm bool
 	// Remove with all unnecessary packages. [--recursive]
@@ -32,6 +34,7 @@ type RemoveOptions struct {
 }
 
 var RemoveDefault = RemoveOptions{
+	Sudo:        true,
 	NoConfirm:   true,
 	Recursive:   true,
 	WithConfigs: true,
@@ -65,8 +68,7 @@ func RemoveList(pkgs []string, opts ...RemoveOptions) error {
 	args = append(args, o.AdditionalParams...)
 	args = append(args, pkgs...)
 
-	cmd := pacmanCmd(true, args...)
-
+	cmd := SudoCommand(o.Sudo, pacman, args...)
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
 	cmd.Stdin = o.Stdin

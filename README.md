@@ -7,6 +7,8 @@
 ![Generic badge](https://img.shields.io/badge/status-alpha-red.svg)
 [![Generic badge](https://img.shields.io/badge/license-gpl-orange.svg)](https://fmnx.su/dancheg97/pacman/src/branch/main/LICENSE)
 [![Generic badge](https://img.shields.io/badge/fmnx-repo-006db0.svg)](https://fmnx.su/dancheg97/pack)
+[![Generic badge](https://img.shields.io/badge/github-repo-white.svg)](https://fmnx.su/dancheg97/pack)
+[![Generic badge](https://img.shields.io/badge/codeberg-repo-45a3fb.svg)](https://fmnx.su/dancheg97/pack)
 
 This library aims to provide concurrent, stable and extensible interface to interact with arch package manager - pacman. Library has 0 dependencies and written in pure go with only a few packages from stdlib.
 
@@ -43,7 +45,7 @@ func main() {
 import "fmnx.su/dancheg97/pacman"
 
 func main() {
-	err := pacman.Upgrade("pkg-1-1-any.pkg.tar.zst")
+	err := pacman.Upgrade("nvim-1-1-any.pkg.tar.zst")
 	fmt.Println(err)
 }
 ```

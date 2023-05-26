@@ -207,10 +207,8 @@ func Makepkg(opts ...MakepkgOptions) error {
 	}
 	args = append(args, o.AdditionalParams...)
 
-	cmd := exec.Command("makepkg", args...)
-	if o.Dir != "" {
-		cmd.Dir = o.Dir
-	}
+	cmd := exec.Command(makepkg, args...)
+	cmd.Dir = o.Dir
 	cmd.Stdin = o.Stdin
 	cmd.Stdout = o.Stdout
 	cmd.Stderr = o.Stderr
@@ -222,9 +220,11 @@ func Makepkg(opts ...MakepkgOptions) error {
 // package build/installation).
 func GetShParams(file string, arg string) ([]string, error) {
 	tmpl := "source %s; for i in ${%s[@]}; do \necho $i\ndone"
-	cmd := exec.Command("sh", "-c", fmt.Sprintf(tmpl, file, arg))
+
 	var b bytes.Buffer
+	cmd := exec.Command("sh", "-c", fmt.Sprintf(tmpl, file, arg))
 	cmd.Stdout = &b
+
 	err := cmd.Run()
 	if err != nil {
 		return nil, err
