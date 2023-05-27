@@ -10,6 +10,8 @@
 [![Generic badge](https://img.shields.io/badge/github-repo-white.svg)](https://fmnx.su/dancheg97/pack)
 [![Generic badge](https://img.shields.io/badge/codeberg-repo-45a3fb.svg)](https://fmnx.su/dancheg97/pack)
 
+> **WARNING!!** - library moved to https://fmnx.su/core/pack/pacman, you can find actual version over there.
+
 This library aims to provide concurrent, stable and extensible interface to interact with arch package manager - pacman. Library has 0 dependencies and written in pure go with only a few packages from stdlib.
 
 Some of the default options for functions can contain sudo, if you don't need it you can manually disable it.
